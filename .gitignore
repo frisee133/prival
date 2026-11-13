@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.local/*
+!.local/Запустить.ps1
+deploy/turn-tls/
+*.dump
+*.log
+desktop/Hotkey.exe
