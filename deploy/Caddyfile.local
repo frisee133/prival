@@ -1,0 +1,11 @@
+{
+    admin off
+    auto_https off
+    log { 
+        output discard
+    }
+}
+import rtc.caddy
+:7880 {
+    import rtc
+}

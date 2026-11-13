@@ -1,0 +1,13 @@
+{
+    log {
+        output discard
+    }
+}
+import rtc.caddy
+{$WEB_DOMAIN} {
+    respond /internal/* 404
+    reverse_proxy app:3000
+}
+{$VOICE_DOMAIN} {
+    import rtc
+}

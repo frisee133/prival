@@ -1,0 +1,51 @@
+services:
+  app:
+    environment:
+      NODE_ENV: production
+      TRUST_PROXY: "1"
+    ports: !reset []
+  livekit:
+    environment:
+      LIVEKIT_CONFIG: |
+        port: 7880
+        bind_addresses: ["0.0.0.0"]
+        rtc:
+          use_external_ip: false
+          node_ip: "${MEDIA_IP:?}"
+          tcp_port: 7881
+          udp_port: 7882
+        keys:
+          ${LIVEKIT_API_KEY:?}: "${LIVEKIT_API_SECRET:?}"
+        turn:
+          enabled: true
+          domain: "${TURN_DOMAIN:?}"
+          tls_port: 443
+          udp_port: 3478
+          cert_file: /tls/fullchain.pem
+          key_file: /tls/privkey.pem
+        logging:
+          level: warn
+    ports: !override
+      - "${WEB_BIND_IP:?}:7881:7881/tcp"
+      - "${WEB_BIND_IP:?}:7882:7882/udp"
+      - "${TURN_BIND_IP:?}:443:443/tcp"
+      - "${WEB_BIND_IP:?}:3478:3478/udp"
+    volumes:
+      - ./deploy/turn-tls:/tls:ro
+  proxy:
+    image: caddy:2.10.2-alpine
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:?}
+      VOICE_DOMAIN: ${VOICE_DOMAIN:?}
+    ports: !override
+      - "${WEB_BIND_IP:?}:80:80/tcp"
+      - "${WEB_BIND_IP:?}:443:443/tcp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [app,livekit]
+    restart: unless-stopped
+volumes:
+  caddy_data: {}
+  caddy_config: {}

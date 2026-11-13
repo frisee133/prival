@@ -1,0 +1,10 @@
+(rtc) {
+    @signal path /rtc /rtc/*
+    handle @signal {
+        forward_auth {$APP_UPSTREAM:app:3000} {
+            uri /internal/rtc-auth
+        }
+        reverse_proxy {$SFU_UPSTREAM:livekit:7880}
+    }
+    respond 404
+}

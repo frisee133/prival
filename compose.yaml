@@ -1,0 +1,70 @@
+name: prival
+services:
+  db:
+    image: postgres:18.3-bookworm
+    environment:
+      POSTGRES_DB: prival
+      POSTGRES_USER: prival
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U prival -d prival"]
+      interval: 4s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  livekit:
+    image: livekit/livekit-server:v1.13.11
+    environment:
+      LIVEKIT_CONFIG: |
+        port: 7880
+        bind_addresses: ["0.0.0.0"]
+        rtc:
+          use_external_ip: false
+          node_ip: "${MEDIA_IP:-127.0.0.1}"
+          enable_loopback_candidate: true
+          tcp_port: 7881
+          udp_port: 7882
+        keys:
+          ${LIVEKIT_API_KEY:?}: "${LIVEKIT_API_SECRET:?}"
+        logging:
+          level: warn
+    ports:
+      - "127.0.0.1:7881:7881/tcp"
+      - "127.0.0.1:7882:7882/udp"
+    restart: unless-stopped
+  app:
+    build: .
+    environment:
+      PROFILE_RETENTION_DAYS: ${PROFILE_RETENTION_DAYS:-180}
+      NODE_ENV: development
+      BIND_HOST: 0.0.0.0
+      APP_ORIGIN: ${APP_ORIGIN:?}
+      APP_EXTRA_ORIGINS: ${APP_EXTRA_ORIGINS:-}
+      FRIEND_LINK_ORIGIN: ${FRIEND_LINK_ORIGIN:-}
+      DATABASE_URL: postgresql://prival:${POSTGRES_PASSWORD:?}@db:5432/prival
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?}
+      LIVEKIT_HTTP_URL: http://livekit:7880
+      LIVEKIT_PUBLIC_URL: ${LIVEKIT_PUBLIC_URL:?}
+    depends_on:
+      db:
+        condition: service_healthy
+      livekit:
+        condition: service_started
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+  proxy:
+    image: caddy:2.10.2-alpine
+    ports:
+      - "127.0.0.1:7880:7880/tcp"
+    volumes:
+      - ./deploy/Caddyfile.local:/etc/caddy/Caddyfile:ro
+      - ./deploy/rtc.caddy:/etc/caddy/rtc.caddy:ro
+    depends_on: [app,livekit]
+    restart: unless-stopped
+volumes:
+  pgdata: {}
+

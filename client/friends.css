@@ -1,0 +1,104 @@
+.friend-nav {
+  padding: 22px 0;
+}
+.friend-nav .channel span {
+  margin-left: auto;
+  font-size: 0.78rem;
+}
+.friends-app .profile select {
+  display: block;
+  background: #253f2d;
+  color: #e4ecdc;
+  border: none;
+  padding: 3px 4px;
+  font-size: 0.8rem;
+}
+.code-copy {
+  margin-left: auto;
+  gap: 9px;
+  font-size: 0.82rem;
+}
+.code-copy b {
+  font-family: monospace;
+  letter-spacing: 0.08em;
+}
+.friend-row,
+.ring,
+.call-buttons,
+.row-actions,
+.peer-volume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.friend-row {
+  padding: 15px 19px;
+  border-bottom: 1px solid var(--line);
+}
+.friend-row:last-child {
+  border: 0;
+}
+.friend-row small,
+.ring small {
+  display: block;
+}
+.row-actions,
+.peer-volume,
+.hangup {
+  margin-left: auto;
+}
+.row-actions button,
+.hangup,
+.ring button,
+.call-buttons button {
+  font-size: 0.84rem;
+}
+.row-actions .subtle,
+.row-actions .primary {
+  padding: 9px 11px;
+}
+.ring {
+  background: #e2efc3;
+  padding: 14px 18px;
+  border-radius: 13px;
+}
+.ring div {
+  margin-right: auto;
+}
+.call-buttons {
+  padding: 15px 19px;
+  flex-wrap: wrap;
+}
+.danger,
+.hangup {
+  background: #f1dfd9;
+  color: #7f382a;
+  padding: 10px 13px;
+}
+.peer-volume {
+  display: flex;
+}
+.friends-app .hero-text {
+  max-width: 65%;
+}
+.friends-app .hero-text > span {
+  overflow-wrap: anywhere;
+}
+.friends-app .profile {
+  margin-top: 0;
+}
+.friends-app .side-tools {
+  margin-top: auto;
+}
+.friends-app .room-content {
+  justify-content: flex-start;
+}
+.friends-app .topbar {
+  gap: 15px;
+}
+.friends-app .sidebar {
+  min-height: 100dvh;
+}
+.friend-row b {
+  overflow-wrap: anywhere;
+}
